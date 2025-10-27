@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
 
       # Step 2: This is the step with your email in the name, as required
-      - name: Step with email 23f2000659@ds.study.iitm.ac.in
+      - name: 23f2000659@ds.study.iitm.ac.in
         run: echo "This step has the required email in its name."
 
       # Step 3: This step configures git, creates/updates a file, and commits it
