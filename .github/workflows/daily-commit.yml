@@ -1,23 +1,44 @@
-# Set permissions for the job to allow it to write to the repository
+name: Daily Auto Commit
+
+on:
+  # This runs the workflow daily at 08:00 UTC (specific time, no wildcards)
+  schedule:
+    - cron: '0 8 * * *'
+  
+  # This allows you to manually run the workflow from the Actions tab for testing
+  workflow_dispatch: {}
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+
+    # This 'permissions' block is REQUIRED to allow the action to push a commit
     permissions:
       contents: write
 
     steps:
-      # 1. Checks out a copy of your repository
+      # Step 1: Checks out a copy of your repository
       - name: Check out repository
         uses: actions/checkout@v4
 
-      # 2. THIS IS THE REQUIRED STEP
+      # Step 2: This is the step with your email in the name, as required
       - name: Step with email 23f2000659@ds.study.iitm.ac.in
         run: echo "This step has the required email in its name."
 
-      # 3. This step creates the commit
+      # Step 3: This step configures git, creates/updates a file, and commits it
       - name: Create or update a file and commit
         run: |
+          # Configure the git user
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          echo "Last run: $(date)" > last_run.txt
+          
+          # Create or update a file to ensure there's a change to commit
+          echo "Last automated run: $(date)" > last_run.txt
+          
+          # Add, commit, and push the changes
           git add last_run.txt
+          
+          # Commit only if there are changes to avoid empty commits
           if ! git diff-index --quiet HEAD; then
             git commit -m "Automated daily commit"
             git push
